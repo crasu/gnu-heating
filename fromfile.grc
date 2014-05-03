@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Mon Feb 10 23:57:09 2014</timestamp>
+  <timestamp>Sat May  3 12:30:01 2014</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -612,7 +612,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>/home/christian/projects/rtlsdr/mystuff/file10_82_80.31606440.dat</value>
+      <value>/home/christian/projects/rtlsdr/gnu-heating/file10.dat</value>
     </param>
     <param>
       <key>type</key>
