@@ -53,7 +53,7 @@ class top_block(gr.top_block, Qt.QWidget):
         ##################################################
         self.sample_per_sym = sample_per_sym = 906
         self.samp_rate = samp_rate = 2500000
-        self.points = points = os.path.getsize(sys.argv[1])/8 - 100
+        self.points = points = os.path.getsize(sys.argv[1])/8-10
 
         ##################################################
         # Blocks
@@ -91,7 +91,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self._qtgui_waterfall_sink_x_1_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_1_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_1_0_win, 0, 0, 1, 1)
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
-        	points/sample_per_sym-1, #size
+        	points/sample_per_sym-12, #size
         	samp_rate, #samp_rate
         	"QT GUI Plot", #name
         	1 #number of inputs
@@ -175,18 +175,20 @@ class top_block(gr.top_block, Qt.QWidget):
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
         self.low_pass_filter_0 = filter.fir_filter_fff(1, firdes.low_pass(
-        	1, samp_rate, 6e3, 1e3, firdes.WIN_BLACKMAN, 6.76))
-        self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1, (filter.firdes_low_pass(1.0,samp_rate, 80000,60000,filter.firdes.WIN_HAMMING,6.72)), 915000, samp_rate)
+        	1, samp_rate, 6000, 500, firdes.WIN_BLACKMAN, 6.76))
+        self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1, (filter.firdes_low_pass(1.0,samp_rate,80000,60000,filter.firdes.WIN_HAMMING,6.72)), 915000, samp_rate)
         self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(sample_per_sym*(1+0.0), 6*0.3*0.3, 0.5, 0.3, 0.1)
         self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, sys.argv[1], False)
         self.analog_simple_squelch_cc_0 = analog.simple_squelch_cc(-40, 0.5)
         self.analog_quadrature_demod_cf_0 = analog.quadrature_demod_cf(samp_rate/(2*math.pi*50000/8.0))
+        self.analog_feedforward_agc_cc_0 = analog.feedforward_agc_cc(1024, 6)
 
         ##################################################
         # Connections
         ##################################################
+        self.connect((self.analog_feedforward_agc_cc_0, 0), (self.analog_quadrature_demod_cf_0, 0))    
         self.connect((self.analog_quadrature_demod_cf_0, 0), (self.low_pass_filter_0, 0))    
-        self.connect((self.analog_simple_squelch_cc_0, 0), (self.analog_quadrature_demod_cf_0, 0))    
+        self.connect((self.analog_simple_squelch_cc_0, 0), (self.analog_feedforward_agc_cc_0, 0))    
         self.connect((self.blocks_file_source_0, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))    
         self.connect((self.digital_clock_recovery_mm_xx_0, 0), (self.qtgui_time_sink_x_0_0, 0))    
         self.connect((self.freq_xlating_fir_filter_xxx_0_0, 0), (self.analog_simple_squelch_cc_0, 0))    
@@ -214,9 +216,9 @@ class top_block(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_1_0.set_frequency_range(868.0e6, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
         self.freq_xlating_fir_filter_xxx_0_0.set_taps((filter.firdes_low_pass(1.0,self.samp_rate, 80000,60000,filter.firdes.WIN_HAMMING,6.72)))
-        self.analog_quadrature_demod_cf_0.set_gain(self.samp_rate/(2*math.pi*50000/8.0))
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 6e3, 1e3, firdes.WIN_BLACKMAN, 6.76))
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate)
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 6e3, 1e3, firdes.WIN_BLACKMAN, 6.76))
+        self.analog_quadrature_demod_cf_0.set_gain(self.samp_rate/(2*math.pi*50000/8.0))
 
     def get_points(self):
         return self.points
