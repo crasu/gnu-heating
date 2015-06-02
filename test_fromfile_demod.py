@@ -11,7 +11,7 @@ class test_samples(gr_unittest.TestCase):
     def setUp (self):
         self.tb = top_block('file10_5_4.13421120.dat')
         self.sink = blocks.vector_sink_b()
-        self.tb.connect((self.tb.blocks_burst_tagger_0, 0), (self.sink, 0))    
+        self.tb.connect(self.tb.blocks_burst_tagger_0, self.sink)    
 
     def tearDown (self):
         self.tb = None
