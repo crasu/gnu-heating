@@ -39,9 +39,9 @@ class top_block(gr.top_block):
         # Blocks
         ##################################################
         self.low_pass_filter_0 = filter.fir_filter_fff(1, firdes.low_pass(
-            1, samp_rate, 6e3, 4000, firdes.WIN_BLACKMAN, 6.76))
+            1, samp_rate, 6000, 4000, firdes.WIN_BLACKMAN, 6.76))
         self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1, (filter.firdes_low_pass(1.0,samp_rate, 60000,55000,filter.firdes.WIN_BLACKMAN,6.72)), 915000, samp_rate)
-        self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(sample_per_sym*(1+0.0), 6*0.3*0.3, 0.5, 0.3, 0.1)
+        self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(sample_per_sym*(1+0.0), 4*0.3*0.3, 0.5, 0.3, 0.01)
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
         self.blocks_threshold_ff_0 = blocks.threshold_ff(0.1, 2, 0)
         self.blocks_tagged_file_sink_0 = blocks.tagged_file_sink(gr.sizeof_char*1, samp_rate)
@@ -90,9 +90,9 @@ class top_block(gr.top_block):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.freq_xlating_fir_filter_xxx_0_0.set_taps((filter.firdes_low_pass(1.0,self.samp_rate,60000,55000,filter.firdes.WIN_BLACKMAN,6.72)))
         self.analog_quadrature_demod_cf_0.set_gain(self.samp_rate/(2*math.pi*50000/8.0))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 6000, 4000, firdes.WIN_BLACKMAN, 6.76))
+        self.freq_xlating_fir_filter_xxx_0_0.set_taps((filter.firdes_low_pass(1.0,self.samp_rate, 60000,55000,filter.firdes.WIN_BLACKMAN,6.72)))
 
     def get_points(self):
         return self.points

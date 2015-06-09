@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 from fromfile_demod import top_block
