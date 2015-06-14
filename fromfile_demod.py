@@ -19,6 +19,9 @@ import sip
 import sys
 import os
 
+def data_to_str(data):
+    return ''.join(map(str, data))
+
 from distutils.version import StrictVersion
 class top_block(gr.top_block):
 
@@ -73,6 +76,9 @@ class top_block(gr.top_block):
         self.connect((self.freq_xlating_fir_filter_xxx_0_0, 0), (self.analog_simple_squelch_cc_0, 0))    
         self.connect((self.low_pass_filter_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))    
 
+        self.sink = blocks.vector_sink_b()
+        self.connect(self.blocks_burst_tagger_0, self.sink)    
+
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "top_block")
         self.settings.setValue("geometry", self.saveGeometry())
@@ -107,3 +113,8 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     tb = top_block(sys.argv[1])
     tb.run()
+    out = data_to_str(tb.sink.data())
+    hpos = out.find('00001100011')
+    if(hpos > 0):
+        print('mv ' + sys.argv[1] + ' samples/' + out[hpos:hpos+60] + '.dat4')
+    
