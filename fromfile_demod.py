@@ -115,6 +115,7 @@ if __name__ == '__main__':
     tb.run()
     out = data_to_str(tb.sink.data())
     hpos = out.find('00001100011')
-    if(hpos > 0):
-        print('mv ' + sys.argv[1] + ' samples/' + out[hpos:hpos+60] + '.dat4')
-    
+    if(hpos >= 0 and len(out[hpos:hpos+60]) == 60):
+        print('mv -n ' + sys.argv[1] + ' samples/' + out[hpos:hpos+60] + '.dat4')
+    else:
+        print sys.argv[1]
