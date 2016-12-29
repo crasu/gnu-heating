@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-from fromfile_demod import top_block, data_to_str
 from glob import glob
 from random import shuffle
 import re
@@ -9,36 +8,54 @@ import re
 
 def bit_slice(input, rate=5):
     output = ""
-    sample = input[0:rate]
     i = 0
 
-    while sample:
-        if find_phase_change(sample) == -1:
-            output += sample[0]
-        i += rate
-        sample = input[i:i + rate] 
+    while i < len(input):
+        sample = input[i:i + rate]
+        if len(sample) < rate/2:
+            return output
+
+        if sample.count("1") > len(sample)/2:
+            output += "1"
+        else:
+            output += "0"
+        
+        if len(sample) != rate:
+            return output
+
+        i = find_phase_change(input, rate, i)
 
     return output
 
-def find_phase_change(input, reversed=False):
-    for i in range(len(input) - 1, 0, -1) if reversed else range(0, len(input) - 1):
-        bit = input[i]
-        nextbit = input[i - 1] if reversed else input[i + 1]
-        if bit != nextbit:
-            return i 
-    return -1
+def find_phase_change(input, rate, i):
+    if input[i + rate/2] == "1":
+        char_to_find = "0"
+    else:
+        char_to_find = "1"
+    before_idx = input.rfind(char_to_find, i, i + rate/2)
+    after_idx = input.find(char_to_find, i + rate/2, i)
+
+    if before_idx == -1 and after_idx == -1:
+        return i + rate
+    
+    if before_idx == -1:
+        return after_idx 
+
+    if after_idx == -1:
+        return before_idx + rate
+
+    return before_idx + rate if rate/2 - before_idx > after_idx - rate/2 else after_idx
 
 class test_slice(gr_unittest.TestCase):
     def test_process_sample(self):
         input = "110101"
         self.assertEqual(bit_slice(input, 1), input)
-        #self.assertEqual(bit_slice([-1, -1, -1, 1, 1, 1]), 3, [-1, 1])
-
-    def test_find_phase_change(self):
-        self.assertEqual(find_phase_change(""), -1)
-        self.assertEqual(find_phase_change("1"), -1)
-        self.assertEqual(find_phase_change("110101"), 1)
-        self.assertEqual(find_phase_change("110101", reversed=True), 5)
+        self.assertEqual(bit_slice("00111100111", 3), "0101")
+        self.assertEqual(bit_slice("000111", 3), "01")
+        self.assertEqual(bit_slice("00111", 3), "01") # fixme
+        self.assertEqual(bit_slice("001111", 3), "01")
+        self.assertEqual(bit_slice("001111", 2), "011")
+        self.assertEqual(bit_slice("001111", 7), "1")
 
 if __name__ == '__main__':
     gr_unittest.run(test_slice)
