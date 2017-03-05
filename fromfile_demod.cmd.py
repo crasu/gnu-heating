@@ -59,6 +59,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate = 2500000
         self.filename = filename
         self.points = points = os.path.getsize(filename)/8
+        self.point_cut = point_cut = 1000
 
 
         ##################################################
@@ -97,7 +98,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self._qtgui_waterfall_sink_x_1_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_1_0.pyqwidget(), Qt.QWidget)
         self.top_grid_layout.addWidget(self._qtgui_waterfall_sink_x_1_0_win, 0, 0, 1, 1)
         self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
-        	points/sample_per_sym-25, #size
+        	(points-point_cut)/sample_per_sym, #size
         	samp_rate, #samp_rate
         	"QT GUI Plot", #name
         	1 #number of inputs
@@ -139,7 +140,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self._qtgui_time_sink_x_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0.pyqwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_0_0_win)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
-        	points-35000, #size
+        	points-point_cut, #size
         	samp_rate, #samp_rate
         	"QT GUI Plot", #name
         	1 #number of inputs
@@ -177,53 +178,29 @@ class top_block(gr.top_block, Qt.QWidget):
             self.qtgui_time_sink_x_0.set_line_style(i, styles[i])
             self.qtgui_time_sink_x_0.set_line_marker(i, markers[i])
             self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
-        
+
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
-        self.low_pass_filter_0 = filter.fir_filter_fff(1, firdes.low_pass(
-            1, samp_rate, 5000, 6000, firdes.WIN_BLACKMAN, 6.76))
         self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1, (filter.firdes_low_pass(1.0,samp_rate, 60000,55000,filter.firdes.WIN_BLACKMAN,6.72)), 915000, samp_rate)
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
-        self.blocks_threshold_ff_0 = blocks.threshold_ff(0.1, 2, 0)
-        self.blocks_tagged_file_sink_0 = blocks.tagged_file_sink(gr.sizeof_char*1, samp_rate)
-        self.blocks_float_to_short_0 = blocks.float_to_short(1, 1)
         self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, filename, False)
         self.blocks_char_to_float_0 = blocks.char_to_float(1, 1)
-        self.blocks_burst_tagger_0 = blocks.burst_tagger(gr.sizeof_char)
-        self.blocks_burst_tagger_0.set_true_tag("burst",True)
-        self.blocks_burst_tagger_0.set_false_tag("burst",False)
-        self.blocks_sink = blocks.vector_sink_b()
-        	
-        self.blocks_abs_xx_0 = blocks.abs_ff(1)
         self.bitslice_slicer_0 = bitslice.slicer(sample_per_sym)
-        self.analog_simple_squelch_cc_0 = analog.simple_squelch_cc(-40, 0.5)
         self.analog_quadrature_demod_cf_0 = analog.quadrature_demod_cf(samp_rate/(2*math.pi*50000/8.0))
-        self.analog_feedforward_agc_cc_0 = analog.feedforward_agc_cc(1024, 6)
-
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_feedforward_agc_cc_0, 0), (self.analog_quadrature_demod_cf_0, 0))    
-        self.connect((self.analog_quadrature_demod_cf_0, 0), (self.low_pass_filter_0, 0))    
-        self.connect((self.analog_simple_squelch_cc_0, 0), (self.analog_feedforward_agc_cc_0, 0))    
-        self.connect((self.bitslice_slicer_0, 0), (self.blocks_burst_tagger_0, 0))
+        self.connect((self.analog_quadrature_demod_cf_0, 0), (self.digital_binary_slicer_fb_0, 0))
+        self.connect((self.analog_quadrature_demod_cf_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.bitslice_slicer_0, 0), (self.blocks_char_to_float_0, 0))
-        self.connect((self.blocks_abs_xx_0, 0), (self.blocks_threshold_ff_0, 0))
-        self.connect((self.blocks_burst_tagger_0, 0), (self.blocks_tagged_file_sink_0, 0))
         self.connect((self.blocks_char_to_float_0, 0), (self.qtgui_time_sink_x_0_0, 0))
         self.connect((self.blocks_file_source_0, 0), (self.freq_xlating_fir_filter_xxx_0_0, 0))
-        self.connect((self.blocks_float_to_short_0, 0), (self.blocks_burst_tagger_0, 1))
-        self.connect((self.blocks_threshold_ff_0, 0), (self.blocks_float_to_short_0, 0))
         self.connect((self.digital_binary_slicer_fb_0, 0), (self.bitslice_slicer_0, 0))
-        self.connect((self.freq_xlating_fir_filter_xxx_0_0, 0), (self.analog_simple_squelch_cc_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0_0, 0), (self.analog_quadrature_demod_cf_0, 0))
         self.connect((self.freq_xlating_fir_filter_xxx_0_0, 0), (self.qtgui_waterfall_sink_x_1_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.blocks_abs_xx_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.digital_binary_slicer_fb_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.qtgui_time_sink_x_0, 0))
 
     def closeEvent(self, event):
-        print data_to_str(self.blocks_sink.data())
         self.settings = Qt.QSettings("GNU Radio", "top_block")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
@@ -240,11 +217,10 @@ class top_block(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.qtgui_waterfall_sink_x_1_0.set_frequency_range(868.0e6, self.samp_rate)
-        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate)
-        self.analog_quadrature_demod_cf_0.set_gain(self.samp_rate/(2*math.pi*50000/8.0))
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 5000, 6000, firdes.WIN_BLACKMAN, 6.76))
+        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
         self.freq_xlating_fir_filter_xxx_0_0.set_taps((filter.firdes_low_pass(1.0,self.samp_rate, 60000,55000,filter.firdes.WIN_BLACKMAN,6.72)))
+        self.analog_quadrature_demod_cf_0.set_gain(self.samp_rate/(2*math.pi*50000/8.0))
 
     def get_points(self):
         return self.points
