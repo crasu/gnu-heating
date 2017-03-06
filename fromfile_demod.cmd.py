@@ -59,7 +59,7 @@ class top_block(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate = 2500000
         self.filename = filename
         self.points = points = os.path.getsize(filename)/8
-        self.point_cut = point_cut = 1000
+        self.point_cut = point_cut = 4000
 
 
         ##################################################
