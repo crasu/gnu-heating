@@ -1,7 +1,4 @@
-captures
-pictures
 top_block.py
 *.dat
 *.pyc
-samples
-bad
+analysis
