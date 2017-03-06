@@ -1,3 +1,6 @@
 [submodule "gr-bitslice"]
 	path = gr-bitslice
 	url = https://github.com/crasu/gr-bitslice.git
+[submodule "gr-manchesterpdu"]
+	path = gr-manchesterpdu
+	url = https://github.com/crasu/gr-manchesterpdu.git
