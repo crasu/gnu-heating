@@ -11,7 +11,7 @@ import time
 
 class test_samples(gr_unittest.TestCase):
     def test_all_dat_sample(self):
-        files = glob('samples/[10][10]*.dat*')
+        files = glob('analysis/samples/[10][10]*.dat*')
         shuffle(files)
         for filename in files:
             self.process_sample(filename)
