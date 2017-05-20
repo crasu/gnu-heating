@@ -159,7 +159,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>180000</value>
+      <value>90000</value>
     </param>
   </block>
   <block>
@@ -186,7 +186,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>500000</value>
+      <value>250000</value>
     </param>
   </block>
   <block>
@@ -213,7 +213,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>190</value>
+      <value>95</value>
     </param>
   </block>
   <block>
@@ -303,7 +303,7 @@
     </param>
     <param>
       <key>threshold</key>
-      <value>-30</value>
+      <value>-45</value>
     </param>
   </block>
   <block>
@@ -2468,7 +2468,7 @@
     </param>
     <param>
       <key>fftsize</key>
-      <value>1024</value>
+      <value>64</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2652,7 +2652,7 @@
     </param>
     <param>
       <key>update_time</key>
-      <value>0.02</value>
+      <value>0.05</value>
     </param>
     <param>
       <key>wintype</key>
