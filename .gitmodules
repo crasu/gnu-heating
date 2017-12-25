@@ -4,3 +4,6 @@
 [submodule "gr-manchesterpdu"]
 	path = gr-manchesterpdu
 	url = https://github.com/crasu/gr-manchesterpdu.git
+[submodule "lightwatch"]
+	path = lightwatch
+	url = https://github.com/crasu/lightwatch
