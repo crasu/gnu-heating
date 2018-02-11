@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.11'?>
+<?grc format='1' created='3.7.10'?>
 <flow_graph>
   <timestamp>Sat May  3 12:30:01 2014</timestamp>
   <block>
@@ -664,6 +664,49 @@
     <param>
       <key>id</key>
       <value>manchesterpdu_manchester_pdu_decoder_0</value>
+    </param>
+  </block>
+  <block>
+    <key>mqtt_mqtt</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>channel</key>
+      <value>/gnuradio</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(920, 872)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>hostname</key>
+      <value>192.168.100.60</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>mqtt_mqtt_0</value>
+    </param>
+    <param>
+      <key>port</key>
+      <value>1883</value>
     </param>
   </block>
   <block>
@@ -2747,6 +2790,12 @@
   <connection>
     <source_block_id>blocks_tagged_stream_to_pdu_0</source_block_id>
     <sink_block_id>manchesterpdu_manchester_pdu_decoder_0</sink_block_id>
+    <source_key>pdus</source_key>
+    <sink_key>in</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_tagged_stream_to_pdu_0</source_block_id>
+    <sink_block_id>mqtt_mqtt_0</sink_block_id>
     <source_key>pdus</source_key>
     <sink_key>in</sink_key>
   </connection>

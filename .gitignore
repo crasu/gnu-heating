@@ -2,3 +2,5 @@ top_block.py
 *.dat
 *.pyc
 analysis
+.idea/
+*.iml
