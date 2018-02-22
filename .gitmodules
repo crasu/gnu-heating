@@ -9,4 +9,4 @@
 	url = https://github.com/crasu/lightwatch
 [submodule "gr-mqtt"]
 	path = gr-mqtt
-	url = git@github.com:crasu/gr-mqtt.git
+	url = https://github.com/crasu/gr-mqtt.git
