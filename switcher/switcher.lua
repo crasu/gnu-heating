@@ -8,7 +8,7 @@ function set(st_reset, st_timer)
 end
 
 
-tmr.alarm(0, 500, 1, function()
+tmr.alarm(0, 550, 1, function()
     print("Switching time " .. t)
     if t == 0 then
         set(gpio.LOW, gpio.LOW)
