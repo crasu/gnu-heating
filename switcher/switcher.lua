@@ -1,6 +1,7 @@
 t = 0 
 RESET = 3
 TIMER = 4
+interval = 400
 
 function set(st_reset, st_timer)
     gpio.write(RESET, st_reset)
@@ -8,7 +9,7 @@ function set(st_reset, st_timer)
 end
 
 
-tmr.alarm(0, 550, 1, function()
+function alarm()
     print("Switching time " .. t)
     if t == 0 then
         set(gpio.LOW, gpio.LOW)
@@ -24,7 +25,12 @@ tmr.alarm(0, 550, 1, function()
         set(gpio.HIGH, gpio.LOW)
     elseif t == 7500 then
         set(gpio.LOW, gpio.LOW)
+        interval=(interval+1)%2000
     end
     t=(t+500)%10000
-end)
+    tmr.alarm(0, interval, tmr.ALARM_SINGLE, alarm)
+end
+
+
+tmr.alarm(0, 750, tmr.ALARM_SINGLE, alarm)
 
