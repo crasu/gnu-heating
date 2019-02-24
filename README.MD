@@ -37,7 +37,7 @@
 
       gnuradio-companion packet_decoder.grc
 
-* You should now be able to see mqtt packet containing the raw messages from the instat controllers
+* You should now be able to see mqtt packets containing the raw messages from the instat controllers
 * You can pipe those messages to a text file
 
       nohup mosquitto_sub -t /gnuradio >> mosquitto_sub.log &
