@@ -5,7 +5,7 @@
     
       apt install gnuradio
     
-* Install gr-osmosdr blocks
+* Install gr-osmosdr blocks (you have to change the gnuradio source if you want to use a different sdr then the hackrf)
 
       apt install
     
