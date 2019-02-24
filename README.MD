@@ -42,7 +42,7 @@
 
       nohup mosquitto_sub -t /gnuradio >> mosquitto_sub.log &
 
-### Decoding the message to a human redable format ###
+### Decoding the message to a human readable format ###
 
 * To decode the mqtt message content run the parser on the logfile content
 
