@@ -5,3 +5,4 @@ analysis
 .idea/
 *.iml
 certs/
+credentials.config

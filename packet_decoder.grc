@@ -9,7 +9,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: no_gui
+    generate_options: qt_gui
     hier_block_src_path: '.:'
     id: packet_decoder
     max_nouts: '0'
@@ -33,6 +33,40 @@ options:
     state: enabled
 
 blocks:
+- name: MQTT_PASS
+  id: variable_config
+  parameters:
+    comment: ''
+    config_file: /home/christian/projects/gnu-heating/credentials.config
+    option: MQTT_PASS
+    section: main
+    type: string
+    value: '0'
+    writeback: None
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [320, 308.0]
+    rotation: 0
+    state: true
+- name: MQTT_USER
+  id: variable_config
+  parameters:
+    comment: ''
+    config_file: /home/christian/projects/gnu-heating/credentials.config
+    option: MQTT_USER
+    section: main
+    type: string
+    value: '0'
+    writeback: None
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [168, 308.0]
+    rotation: 0
+    state: true
 - name: decimation
   id: variable
   parameters:
@@ -177,7 +211,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1152, 332.0]
+    coordinate: [712, 484.0]
     rotation: 0
     state: enabled
 - name: freq_xlating_fir_filter_xxx_0_0
@@ -200,37 +234,26 @@ blocks:
     coordinate: [402, 1]
     rotation: 0
     state: enabled
-- name: manchesterpdu_manchester_pdu_decoder_0
-  id: manchesterpdu_manchester_pdu_decoder
+- name: network_socket_pdu_0
+  id: network_socket_pdu
   parameters:
     affinity: ''
     alias: ''
     comment: ''
+    host: localhost
     maxoutbuf: '0'
     minoutbuf: '0'
+    mtu: '10000'
+    port: '52001'
+    tcp_no_delay: 'False'
+    type: TCP_SERVER
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [688, 536.0]
+    coordinate: [1208, 304.0]
     rotation: 0
-    state: enabled
-- name: mqtt_mqtt_0
-  id: mqtt_mqtt
-  parameters:
-    affinity: ''
-    alias: ''
-    channel: /gnuradio
-    comment: ''
-    hostname: 192.168.100.60
-    port: '1883'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1160, 476.0]
-    rotation: 0
-    state: enabled
+    state: true
 - name: osmosdr_source_0
   id: osmosdr_source
   parameters:
@@ -602,7 +625,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [408, 532.0]
+    coordinate: [960, 500.0]
     rotation: 0
     state: true
 - name: rational_resampler_xxx_0
@@ -653,9 +676,8 @@ connections:
 - [digital_correlate_access_code_tag_xx_0, '0', satellites_fixedlen_tagger_0, '0']
 - [digital_map_bb_0, '0', pdu_tagged_stream_to_pdu_0, '0']
 - [freq_xlating_fir_filter_xxx_0_0, '0', analog_simple_squelch_cc_0, '0']
-- [manchesterpdu_manchester_pdu_decoder_0, out, mqtt_mqtt_0, in]
 - [osmosdr_source_0, '0', freq_xlating_fir_filter_xxx_0_0, '0']
-- [pdu_tagged_stream_to_pdu_0, pdus, manchesterpdu_manchester_pdu_decoder_0, in]
+- [pdu_tagged_stream_to_pdu_0, pdus, network_socket_pdu_0, pdus]
 - [rational_resampler_xxx_0, '0', digital_binary_slicer_fb_0, '0']
 - [satellites_fixedlen_tagger_0, '0', digital_map_bb_0, '0']
 
