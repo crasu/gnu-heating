@@ -188,7 +188,7 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    tagname: ''
+    tagname: syncword
     threshold: '0'
     type: byte
   states:
@@ -211,7 +211,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 484.0]
+    coordinate: [1184, 340.0]
     rotation: 0
     state: enabled
 - name: freq_xlating_fir_filter_xxx_0_0
@@ -234,13 +234,28 @@ blocks:
     coordinate: [402, 1]
     rotation: 0
     state: enabled
+- name: manchesterpdu_manchester_pdu_decoder_1
+  id: manchesterpdu_manchester_pdu_decoder
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [920, 512.0]
+    rotation: 0
+    state: true
 - name: network_socket_pdu_0
   id: network_socket_pdu
   parameters:
     affinity: ''
     alias: ''
     comment: ''
-    host: localhost
+    host: ''
     maxoutbuf: '0'
     minoutbuf: '0'
     mtu: '10000'
@@ -251,7 +266,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1208, 304.0]
+    coordinate: [1304, 460.0]
     rotation: 0
     state: true
 - name: osmosdr_source_0
@@ -625,7 +640,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [960, 500.0]
+    coordinate: [648, 500.0]
     rotation: 0
     state: true
 - name: rational_resampler_xxx_0
@@ -676,8 +691,9 @@ connections:
 - [digital_correlate_access_code_tag_xx_0, '0', satellites_fixedlen_tagger_0, '0']
 - [digital_map_bb_0, '0', pdu_tagged_stream_to_pdu_0, '0']
 - [freq_xlating_fir_filter_xxx_0_0, '0', analog_simple_squelch_cc_0, '0']
+- [manchesterpdu_manchester_pdu_decoder_1, out, network_socket_pdu_0, pdus]
 - [osmosdr_source_0, '0', freq_xlating_fir_filter_xxx_0_0, '0']
-- [pdu_tagged_stream_to_pdu_0, pdus, network_socket_pdu_0, pdus]
+- [pdu_tagged_stream_to_pdu_0, pdus, manchesterpdu_manchester_pdu_decoder_1, in]
 - [rational_resampler_xxx_0, '0', digital_binary_slicer_fb_0, '0']
 - [satellites_fixedlen_tagger_0, '0', digital_map_bb_0, '0']
 
