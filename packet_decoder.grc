@@ -67,18 +67,6 @@ blocks:
     coordinate: [168, 308.0]
     rotation: 0
     state: true
-- name: decimation
-  id: variable
-  parameters:
-    comment: ''
-    value: '19'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [32, 348]
-    rotation: 0
-    state: enabled
 - name: in_frequency
   id: variable
   parameters:
@@ -103,18 +91,6 @@ blocks:
     coordinate: [24, 268]
     rotation: 0
     state: enabled
-- name: sample_per_sym
-  id: variable
-  parameters:
-    comment: ''
-    value: 95/decimation
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [32, 420]
-    rotation: 0
-    state: enabled
 - name: analog_quadrature_demod_cf_0
   id: analog_quadrature_demod_cf
   parameters:
@@ -128,7 +104,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [440, 172]
+    coordinate: [960, 124.0]
     rotation: 0
     state: enabled
 - name: analog_simple_squelch_cc_0
@@ -145,7 +121,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [672, 12]
+    coordinate: [1232, 36.0]
     rotation: 0
     state: enabled
 - name: bitslice_slicer_0
@@ -161,7 +137,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1128, 172]
+    coordinate: [1392, 212.0]
     rotation: 0
     state: enabled
 - name: digital_binary_slicer_fb_0
@@ -176,7 +152,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [904, 176]
+    coordinate: [1192, 216.0]
     rotation: 0
     state: enabled
 - name: digital_correlate_access_code_tag_xx_0
@@ -211,7 +187,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1184, 340.0]
+    coordinate: [1240, 340.0]
     rotation: 0
     state: enabled
 - name: freq_xlating_fir_filter_xxx_0_0
@@ -219,19 +195,19 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    center_freq: '115000'
+    center_freq: '140000'
     comment: ''
     decim: '1'
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_rate: samp_rate
-    taps: firdes.low_pass(1,samp_rate,samp_rate/(2*1), 55000)
+    taps: ' firdes.low_pass(1,samp_rate,80000/(2*1), 5000)'
     type: ccc
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [402, 1]
+    coordinate: [416, 20.0]
     rotation: 0
     state: enabled
 - name: manchesterpdu_manchester_pdu_decoder_1
@@ -246,7 +222,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 512.0]
+    coordinate: [928, 504.0]
     rotation: 0
     state: true
 - name: network_socket_pdu_0
@@ -266,7 +242,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1304, 460.0]
+    coordinate: [1312, 476.0]
     rotation: 0
     state: true
 - name: osmosdr_source_0
@@ -306,7 +282,7 @@ blocks:
     ant7: ''
     ant8: ''
     ant9: ''
-    args: ''
+    args: bias=1
     bb_gain0: '20'
     bb_gain1: '20'
     bb_gain10: '20'
@@ -508,7 +484,7 @@ blocks:
     gain7: '10'
     gain8: '10'
     gain9: '10'
-    gain_mode0: 'False'
+    gain_mode0: 'True'
     gain_mode1: 'False'
     gain_mode10: 'False'
     gain_mode11: 'False'
@@ -649,7 +625,7 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    decim: decimation
+    decim: '20'
     fbw: '0'
     interp: '1'
     maxoutbuf: '0'
@@ -660,7 +636,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [656, 148]
+    coordinate: [936, 188.0]
     rotation: 0
     state: enabled
 - name: satellites_fixedlen_tagger_0
@@ -679,7 +655,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [872, 324.0]
+    coordinate: [936, 324.0]
     rotation: 0
     state: true
 

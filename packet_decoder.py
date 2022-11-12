@@ -83,8 +83,6 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.decimation = decimation = 19
-        self.sample_per_sym = sample_per_sym = 95/decimation
         self.samp_rate = samp_rate = 250000
         self.in_frequency = in_frequency = 868.8e6
         self._MQTT_USER_config = configparser.ConfigParser()
@@ -104,12 +102,12 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         self.satellites_fixedlen_tagger_0 = satellites.fixedlen_tagger('syncword', 'packet_len', 48, numpy.byte)
         self.rational_resampler_xxx_0 = filter.rational_resampler_fff(
                 interpolation=1,
-                decimation=decimation,
+                decimation=20,
                 taps=[],
                 fractional_bw=0)
         self.pdu_tagged_stream_to_pdu_0 = pdu.tagged_stream_to_pdu(gr.types.byte_t, 'packet_len')
         self.osmosdr_source_0 = osmosdr.source(
-            args="numchan=" + str(1) + " " + ''
+            args="numchan=" + str(1) + " " + 'bias=1'
         )
         self.osmosdr_source_0.set_time_unknown_pps(osmosdr.time_spec_t())
         self.osmosdr_source_0.set_sample_rate(samp_rate)
@@ -117,7 +115,7 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_freq_corr(0, 0)
         self.osmosdr_source_0.set_dc_offset_mode(0, 0)
         self.osmosdr_source_0.set_iq_balance_mode(0, 0)
-        self.osmosdr_source_0.set_gain_mode(False, 0)
+        self.osmosdr_source_0.set_gain_mode(True, 0)
         self.osmosdr_source_0.set_gain(0, 0)
         self.osmosdr_source_0.set_if_gain(20, 0)
         self.osmosdr_source_0.set_bb_gain(20, 0)
@@ -125,7 +123,7 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_bandwidth(0, 0)
         self.network_socket_pdu_0 = network.socket_pdu('TCP_SERVER', '', '52001', 10000, False)
         self.manchesterpdu_manchester_pdu_decoder_1 = manchesterpdu.manchester_pdu_decoder()
-        self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1, firdes.low_pass(1,samp_rate,samp_rate/(2*1), 55000), 115000, samp_rate)
+        self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1,  firdes.low_pass(1,samp_rate,80000/(2*1), 5000), 140000, samp_rate)
         self.digital_map_bb_0 = digital.map_bb([48,49])
         self.digital_correlate_access_code_tag_xx_0 = digital.correlate_access_code_tag_bb('000011000110', 0, 'syncword')
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
@@ -159,26 +157,13 @@ class packet_decoder(gr.top_block, Qt.QWidget):
 
         event.accept()
 
-    def get_decimation(self):
-        return self.decimation
-
-    def set_decimation(self, decimation):
-        self.decimation = decimation
-        self.set_sample_per_sym(95/self.decimation)
-
-    def get_sample_per_sym(self):
-        return self.sample_per_sym
-
-    def set_sample_per_sym(self, sample_per_sym):
-        self.sample_per_sym = sample_per_sym
-
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.analog_quadrature_demod_cf_0.set_gain((self.samp_rate)/(2*math.pi*50000/8.0))
-        self.freq_xlating_fir_filter_xxx_0_0.set_taps(firdes.low_pass(1,self.samp_rate,self.samp_rate/(2*1), 55000))
+        self.freq_xlating_fir_filter_xxx_0_0.set_taps( firdes.low_pass(1,self.samp_rate,80000/(2*1), 5000))
         self.osmosdr_source_0.set_sample_rate(self.samp_rate)
 
     def get_in_frequency(self):
