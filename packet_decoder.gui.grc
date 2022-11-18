@@ -9,7 +9,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: no_gui
+    generate_options: qt_gui
     hier_block_src_path: '.:'
     id: packet_decoder
     max_nouts: '0'
@@ -67,6 +67,18 @@ blocks:
     coordinate: [168, 308.0]
     rotation: 0
     state: true
+- name: center_frequency_0
+  id: variable
+  parameters:
+    comment: ''
+    value: '140000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [24, 188.0]
+    rotation: 0
+    state: enabled
 - name: in_frequency
   id: variable
   parameters:
@@ -91,6 +103,134 @@ blocks:
     coordinate: [24, 268]
     rotation: 0
     state: enabled
+- name: variable_qtgui_enable_button
+  id: variable_qtgui_toggle_button_msg
+  parameters:
+    comment: ''
+    gui_hint: '[0,2,1,1]'
+    initPressed: 'True'
+    label: Run
+    outputmsgname: value
+    pressBackgroundColor: default
+    pressFontColor: default
+    pressed: 'True'
+    relBackgroundColor: default
+    relFontColor: default
+    released: 'False'
+    type: bool
+    value: 'True'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [592, 572.0]
+    rotation: 0
+    state: true
+- name: variable_qtgui_sdr_bb_gain_range_0
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: '[4,2,1,1]'
+    label: BB Gain (vga)
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '2'
+    stop: '60'
+    value: '42'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [824, 724.0]
+    rotation: 0
+    state: true
+- name: variable_qtgui_sdr_if_gain_range_0
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: '[3,2,1,1]'
+    label: IF Gain (lna)
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '8'
+    stop: '40'
+    value: '24'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [816, 564.0]
+    rotation: 0
+    state: true
+- name: variable_qtgui_squelch_threshold_0
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: '[5,2,1,1]'
+    label: Squelch threshold
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '-100'
+    step: '1'
+    stop: '-10'
+    value: '-44'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [824, 876.0]
+    rotation: 0
+    state: true
+- name: variable_qtgui_waterfall_update_interval_multiplier
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: '[2,2,1,1]'
+    label: FFT  interval multiplier in 1/10*n
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '1'
+    step: '0.5'
+    stop: '5'
+    value: '2'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [592, 868.0]
+    rotation: 0
+    state: true
+- name: variable_qtgui_xlating_filter_width_range
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: '[1,2,1,1]'
+    label: Filter Width in khz
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '1'
+    stop: '500'
+    value: '80'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [592, 716.0]
+    rotation: 0
+    state: true
 - name: analog_quadrature_demod_cf_0
   id: analog_quadrature_demod_cf
   parameters:
@@ -116,7 +256,7 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    threshold: '-50'
+    threshold: variable_qtgui_squelch_threshold_0
   states:
     bus_sink: false
     bus_source: false
@@ -140,6 +280,29 @@ blocks:
     coordinate: [1392, 212.0]
     rotation: 0
     state: enabled
+- name: blocks_selector_0
+  id: blocks_selector
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    enabled: variable_qtgui_enable_button
+    input_index: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '1'
+    num_outputs: '1'
+    output_index: '0'
+    showports: 'True'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [32, 692.0]
+    rotation: 0
+    state: true
 - name: digital_binary_slicer_fb_0
   id: digital_binary_slicer_fb
   parameters:
@@ -195,13 +358,14 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    center_freq: '140000'
+    center_freq: center_frequency_0
     comment: ''
     decim: '1'
     maxoutbuf: '0'
     minoutbuf: '0'
     samp_rate: samp_rate
-    taps: ' firdes.low_pass(1,samp_rate,80000/(2*1), 5000)'
+    taps: ' firdes.low_pass(1,samp_rate,variable_qtgui_xlating_filter_width_range*1000/(2*1),
+      10000)'
     type: ccc
   states:
     bus_sink: false
@@ -283,7 +447,7 @@ blocks:
     ant8: ''
     ant9: ''
     args: ''
-    bb_gain0: '30'
+    bb_gain0: variable_qtgui_sdr_bb_gain_range_0
     bb_gain1: '20'
     bb_gain10: '20'
     bb_gain11: '20'
@@ -516,7 +680,7 @@ blocks:
     gain_mode7: 'False'
     gain_mode8: 'False'
     gain_mode9: 'False'
-    if_gain0: '0'
+    if_gain0: variable_qtgui_sdr_if_gain_range_0
     if_gain1: '20'
     if_gain10: '20'
     if_gain11: '20'
@@ -619,6 +783,148 @@ blocks:
     coordinate: [648, 500.0]
     rotation: 0
     state: true
+- name: qtgui_freq_sink_x_0
+  id: qtgui_freq_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'False'
+    average: '1.0'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '"blue"'
+    color10: '"dark blue"'
+    color2: '"red"'
+    color3: '"green"'
+    color4: '"black"'
+    color5: '"cyan"'
+    color6: '"magenta"'
+    color7: '"yellow"'
+    color8: '"dark red"'
+    color9: '"dark green"'
+    comment: ''
+    ctrlpanel: 'True'
+    fc: in_frequency+center_frequency_0
+    fftsize: '1024'
+    freqhalf: 'True'
+    grid: 'False'
+    gui_hint: ''
+    label: Relative Gain
+    label1: ''
+    label10: ''''''
+    label2: ''''''
+    label3: ''''''
+    label4: ''''''
+    label5: ''''''
+    label6: ''''''
+    label7: ''''''
+    label8: ''''''
+    label9: ''''''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '""'
+    nconnections: '1'
+    norm_window: 'False'
+    showports: 'False'
+    tr_chan: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_tag: '""'
+    type: complex
+    units: dB
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    wintype: window.WIN_BLACKMAN_hARRIS
+    ymax: '10'
+    ymin: '-140'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [232, 780.0]
+    rotation: 0
+    state: true
+- name: qtgui_waterfall_sink_x_0
+  id: qtgui_waterfall_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '0'
+    color10: '0'
+    color2: '0'
+    color3: '0'
+    color4: '0'
+    color5: '0'
+    color6: '0'
+    color7: '0'
+    color8: '0'
+    color9: '0'
+    comment: ''
+    fc: in_frequency+center_frequency_0
+    fftsize: '1024'
+    freqhalf: 'True'
+    grid: 'False'
+    gui_hint: '[0,0,5,2]'
+    int_max: '10'
+    int_min: '-140'
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '""'
+    nconnections: '1'
+    showports: 'False'
+    type: complex
+    update_time: 1/(10**variable_qtgui_waterfall_update_interval_multiplier)
+    wintype: window.WIN_BLACKMAN_hARRIS
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [232, 556.0]
+    rotation: 0
+    state: true
 - name: rational_resampler_xxx_0
   id: rational_resampler_xxx
   parameters:
@@ -663,10 +969,13 @@ connections:
 - [analog_quadrature_demod_cf_0, '0', rational_resampler_xxx_0, '0']
 - [analog_simple_squelch_cc_0, '0', analog_quadrature_demod_cf_0, '0']
 - [bitslice_slicer_0, '0', digital_correlate_access_code_tag_xx_0, '0']
+- [blocks_selector_0, '0', qtgui_freq_sink_x_0, '0']
+- [blocks_selector_0, '0', qtgui_waterfall_sink_x_0, '0']
 - [digital_binary_slicer_fb_0, '0', bitslice_slicer_0, '0']
 - [digital_correlate_access_code_tag_xx_0, '0', satellites_fixedlen_tagger_0, '0']
 - [digital_map_bb_0, '0', pdu_tagged_stream_to_pdu_0, '0']
 - [freq_xlating_fir_filter_xxx_0_0, '0', analog_simple_squelch_cc_0, '0']
+- [freq_xlating_fir_filter_xxx_0_0, '0', blocks_selector_0, '0']
 - [manchesterpdu_manchester_pdu_decoder_1, out, network_socket_pdu_0, pdus]
 - [osmosdr_source_0, '0', freq_xlating_fir_filter_xxx_0_0, '0']
 - [pdu_tagged_stream_to_pdu_0, pdus, manchesterpdu_manchester_pdu_decoder_1, in]
