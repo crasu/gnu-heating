@@ -353,6 +353,54 @@ blocks:
     coordinate: [1240, 340.0]
     rotation: 0
     state: enabled
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Block demo\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\nimport pmt\n\nimport fileinput\nimport json\ncmd_dict\
+      \ = { \"1011\": \"reset\", \"0101\": \"off\", \"1110\": \"on\", \"0100\": \"\
+      reset\", \"1010\": \"off\", \"0001\": \"on\", \"1100\": \"new adr\", \"0011\"\
+      : \"new adr\"}\n\nseq_dict = {\n    \"0001\": [13, 5, 1, 9, 7, 15, 3, 11, 12,\
+      \ 4, 0, 8, 10, 2, 6, 14], #off 0-end\n    \"0101\": [13, 5, 1, 9, 7, 15, 3,\
+      \ 11, 12, 4, 0, 8, 10, 2, 6, 14], #off 1-end\n    \"1010\": [14, 6, 2, 10, 8,\
+      \ 0, 4, 12, 11, 3, 15, 7, 9, 1, 5, 13], #on 0-end\n    \"1110\": [14, 6, 2,\
+      \ 10, 8, 0, 4, 12, 11, 3, 15, 7, 9, 1, 5, 13], #on 1-end\n    \"1011\": [None,\
+      \ None, None, None, None, None, None, None, None, None, 0, None, None, None,\
+      \ None, None], #reset 1-end\n    \"0100\": [None, None, None, None, None, 0,\
+      \ None, None, None, None, None, None, None, None, None, None], #reset 0-end\n\
+      \    \"0011\": [None, None, None, None, None, None, None, None, None, None,\
+      \ 0, None, None, None, None, None], #new 1-end\n    \"1100\": [None, None, None,\
+      \ None, None, 0, None, None, None, None, None, None, None, None, None, None],\
+      \ #new 0-end\n}\n\ndef lookup_decimal_sequence(command, seq):\n    if command\
+      \ in seq_dict:\n        slist = seq_dict[command]\n        return slist[int(seq,\
+      \ 2)]\n    else:\n        return None\n\n\nclass my_sync_block(gr.sync_block):\n\
+      \    def __init__(self):\n        gr.sync_block.__init__(self,\n           \
+      \ name = \"Heating decoder\",\n            in_sig = None,\n            out_sig\
+      \ = None)\n        self.message_port_register_in(pmt.intern('msg_in'))\n   \
+      \     self.set_msg_handler(pmt.intern('msg_in'), self.handle_msg)\n        \n\
+      \    @staticmethod\n    def str_from_msg(msg):\n        msg = pmt.to_python(msg)[1]\n\
+      \        msg_str = ''.join(chr(c) for c in msg)\n        return msg_str\n\n\
+      \    def handle_msg(self, msg):\t\n        msg=my_sync_block.str_from_msg(msg)\n\
+      \        command = msg[12:16]\n        command_str = cmd_dict.get(command, \"\
+      unk\")\n        adr = msg[0:12]\n        seq = msg[16:20]\n        chksum =\
+      \ msg[20:24]\n        seqd = str(lookup_decimal_sequence(command, seq)).zfill(4)\n\
+      \        print(f\"Adr: {adr} Cmd: {command} ({command_str}) Seq: {seq} Sum:\
+      \ {chksum}\", flush=True)\n    \n    def work(self, input_items, output_items):\n\
+      \        pass\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Heating decoder', 'my_sync_block', [], [('msg_in', 'message', 1)],
+      [], '', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1248, 648.0]
+    rotation: 0
+    state: true
 - name: freq_xlating_fir_filter_xxx_0_0
   id: freq_xlating_fir_filter_xxx
   parameters:
@@ -386,7 +434,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [928, 504.0]
+    coordinate: [896, 504.0]
     rotation: 0
     state: true
 - name: network_socket_pdu_0
@@ -406,7 +454,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1312, 476.0]
+    coordinate: [1272, 476.0]
     rotation: 0
     state: true
 - name: osmosdr_source_0
@@ -976,6 +1024,7 @@ connections:
 - [digital_map_bb_0, '0', pdu_tagged_stream_to_pdu_0, '0']
 - [freq_xlating_fir_filter_xxx_0_0, '0', analog_simple_squelch_cc_0, '0']
 - [freq_xlating_fir_filter_xxx_0_0, '0', blocks_selector_0, '0']
+- [manchesterpdu_manchester_pdu_decoder_1, out, epy_block_0, msg_in]
 - [manchesterpdu_manchester_pdu_decoder_1, out, network_socket_pdu_0, pdus]
 - [osmosdr_source_0, '0', freq_xlating_fir_filter_xxx_0_0, '0']
 - [pdu_tagged_stream_to_pdu_0, pdus, manchesterpdu_manchester_pdu_decoder_1, in]
