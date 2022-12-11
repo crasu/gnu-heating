@@ -321,7 +321,7 @@ blocks:
 - name: digital_correlate_access_code_tag_xx_0
   id: digital_correlate_access_code_tag_xx
   parameters:
-    access_code: '000011000110'
+    access_code: '00001100011'
     affinity: ''
     alias: ''
     comment: ''
@@ -359,22 +359,10 @@ blocks:
     _source_code: "\"\"\"\nEmbedded Python Block demo\n\"\"\"\n\nimport numpy as np\n\
       from gnuradio import gr\nfrom datetime import datetime\n\nimport pmt\n\nfrom\
       \ datetime import datetime\n\nimport fileinput\nimport json\ncmd_dict = { \"\
-      1011\": \"reset\", \"0101\": \"off\", \"1110\": \"on\", \"0100\": \"reset\"\
-      , \"1010\": \"off\", \"0001\": \"on\", \"1100\": \"new adr\", \"0011\": \"new\
-      \ adr\"}\n\nseq_dict = {\n    \"0001\": [13, 5, 1, 9, 7, 15, 3, 11, 12, 4, 0,\
-      \ 8, 10, 2, 6, 14], #off 0-end\n    \"0101\": [13, 5, 1, 9, 7, 15, 3, 11, 12,\
-      \ 4, 0, 8, 10, 2, 6, 14], #off 1-end\n    \"1010\": [14, 6, 2, 10, 8, 0, 4,\
-      \ 12, 11, 3, 15, 7, 9, 1, 5, 13], #on 0-end\n    \"1110\": [14, 6, 2, 10, 8,\
-      \ 0, 4, 12, 11, 3, 15, 7, 9, 1, 5, 13], #on 1-end\n    \"1011\": [None, None,\
-      \ None, None, None, None, None, None, None, None, 0, None, None, None, None,\
-      \ None], #reset 1-end\n    \"0100\": [None, None, None, None, None, 0, None,\
-      \ None, None, None, None, None, None, None, None, None], #reset 0-end\n    \"\
-      0011\": [None, None, None, None, None, None, None, None, None, None, 0, None,\
-      \ None, None, None, None], #new 1-end\n    \"1100\": [None, None, None, None,\
-      \ None, 0, None, None, None, None, None, None, None, None, None, None], #new\
-      \ 0-end\n}\n\ndef lookup_decimal_sequence(command, seq):\n    if command in\
-      \ seq_dict:\n        slist = seq_dict[command]\n        return slist[int(seq,\
-      \ 2)]\n    else:\n        return None\n\n\nclass my_sync_block(gr.sync_block):\n\
+      0101\": \"learn\", \"0000\": \"off\", \"1110\": \"on\", \"1001\": \"reset\"\
+      , \"1000\": \"pwm\"}\n\n\ndef calc_checksum(msg):\n    s=0\n    for pos in range(0,\
+      \ len(msg)-4, 4):\n        chunk=int(msg[pos:pos+4][::-1], 2)\n        s = (s\
+      \ + chunk)\n    return 15 - (s % 15)\n\n\nclass my_sync_block(gr.sync_block):\n\
       \    def __init__(self):\n        gr.sync_block.__init__(self,\n           \
       \ name = \"Heating decoder\",\n            in_sig = None,\n            out_sig\
       \ = None)\n        self.message_port_register_in(pmt.intern('msg_in'))\n   \
@@ -383,11 +371,12 @@ blocks:
       \        msg_str = ''.join(chr(c) for c in msg)\n        return msg_str\n\n\
       \    def handle_msg(self, msg):\t\n        msg=my_sync_block.str_from_msg(msg)\n\
       \        command = msg[12:16]\n        command_str = cmd_dict.get(command, \"\
-      unk\")\n        adr = msg[0:12]\n        seq = msg[16:20]\n        chksum =\
-      \ msg[20:24]\n        seqd = str(lookup_decimal_sequence(command, seq)).zfill(4)\n\
-      \        print(f\"Time: {datetime.now()} Adr: {adr} Cmd: {command} ({command_str})\
-      \ Seq: {seq} Sum: {chksum}\", flush=True)\n    \n    def work(self, input_items,\
-      \ output_items):\n        pass\n"
+      unk\")\n        adr = msg[0:12]\n        seq = int(msg[16:20][::-1], 2)\n  \
+      \      chksum = int(msg[20:24][::-1], 2)\n        chksumok = \"ok\" if calc_checksum(msg)\
+      \ == chksum else f\"!= {calc_checksum(msg)}\"\n        print(f\"Time: {datetime.now()}\
+      \ Adr: {adr} Cmd: {command} ({command_str}) Seq: {seq} Sum: {chksum} {chksumok}\"\
+      , flush=True)\n    \n    def work(self, input_items, output_items):\n      \
+      \  pass\n"
     affinity: ''
     alias: ''
     comment: ''
@@ -423,20 +412,20 @@ blocks:
     coordinate: [416, 20.0]
     rotation: 0
     state: enabled
-- name: manchesterpdu_manchester_pdu_decoder_1
+- name: manchesterpdu_manchester_pdu_decoder_0
   id: manchesterpdu_manchester_pdu_decoder
   parameters:
-    Mode: '0'
     affinity: ''
     alias: ''
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
+    mode: '2'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [896, 504.0]
+    coordinate: [896, 500.0]
     rotation: 0
     state: true
 - name: network_socket_pdu_0
@@ -1123,10 +1112,10 @@ connections:
 - [digital_correlate_access_code_tag_xx_0, '0', satellites_fixedlen_tagger_0, '0']
 - [digital_map_bb_0, '0', pdu_tagged_stream_to_pdu_0, '0']
 - [freq_xlating_fir_filter_xxx_0_0, '0', blocks_selector_0, '0']
-- [manchesterpdu_manchester_pdu_decoder_1, out, epy_block_0, msg_in]
-- [manchesterpdu_manchester_pdu_decoder_1, out, network_socket_pdu_0, pdus]
+- [manchesterpdu_manchester_pdu_decoder_0, out, epy_block_0, msg_in]
+- [manchesterpdu_manchester_pdu_decoder_0, out, network_socket_pdu_0, pdus]
 - [osmosdr_source_0, '0', freq_xlating_fir_filter_xxx_0_0, '0']
-- [pdu_tagged_stream_to_pdu_0, pdus, manchesterpdu_manchester_pdu_decoder_1, in]
+- [pdu_tagged_stream_to_pdu_0, pdus, manchesterpdu_manchester_pdu_decoder_0, in]
 - [rational_resampler_xxx_0, '0', digital_binary_slicer_fb_0, '0']
 - [rational_resampler_xxx_0, '0', qtgui_time_sink_x_0, '0']
 - [satellites_fixedlen_tagger_0, '0', digital_map_bb_0, '0']

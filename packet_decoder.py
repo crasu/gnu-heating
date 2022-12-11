@@ -315,11 +315,11 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_antenna('', 0)
         self.osmosdr_source_0.set_bandwidth(0, 0)
         self.network_socket_pdu_0 = network.socket_pdu('TCP_SERVER', '', '52001', 10000, False)
-        self.manchesterpdu_manchester_pdu_decoder_1 = manchesterpdu.manchester_pdu_decoder(0)
+        self.manchesterpdu_manchester_pdu_decoder_0 = manchesterpdu.manchester_pdu_decoder(2)
         self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1,  firdes.low_pass(1,samp_rate,variable_qtgui_xlating_filter_width_range*1000/(2*1), 10000), center_frequency_0, samp_rate)
         self.epy_block_0 = epy_block_0.my_sync_block()
         self.digital_map_bb_0 = digital.map_bb([48,49])
-        self.digital_correlate_access_code_tag_xx_0 = digital.correlate_access_code_tag_bb('000011000110', 0, 'syncword')
+        self.digital_correlate_access_code_tag_xx_0 = digital.correlate_access_code_tag_bb('00001100011', 0, 'syncword')
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
         self.blocks_selector_0 = blocks.selector(gr.sizeof_gr_complex*1,0,0)
         self.blocks_selector_0.set_enabled(variable_qtgui_enable_button)
@@ -331,9 +331,9 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.manchesterpdu_manchester_pdu_decoder_1, 'out'), (self.epy_block_0, 'msg_in'))
-        self.msg_connect((self.manchesterpdu_manchester_pdu_decoder_1, 'out'), (self.network_socket_pdu_0, 'pdus'))
-        self.msg_connect((self.pdu_tagged_stream_to_pdu_0, 'pdus'), (self.manchesterpdu_manchester_pdu_decoder_1, 'in'))
+        self.msg_connect((self.manchesterpdu_manchester_pdu_decoder_0, 'out'), (self.epy_block_0, 'msg_in'))
+        self.msg_connect((self.manchesterpdu_manchester_pdu_decoder_0, 'out'), (self.network_socket_pdu_0, 'pdus'))
+        self.msg_connect((self.pdu_tagged_stream_to_pdu_0, 'pdus'), (self.manchesterpdu_manchester_pdu_decoder_0, 'in'))
         self.connect((self.analog_quadrature_demod_cf_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.analog_simple_squelch_cc_0, 0), (self.analog_quadrature_demod_cf_0, 0))
         self.connect((self.bitslice_slicer_0, 0), (self.digital_correlate_access_code_tag_xx_0, 0))
