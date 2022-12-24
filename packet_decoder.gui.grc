@@ -280,6 +280,20 @@ blocks:
     coordinate: [1392, 212.0]
     rotation: 0
     state: enabled
+- name: blocks_message_debug_0
+  id: blocks_message_debug
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    en_uvec: 'True'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1384, 776.0]
+    rotation: 0
+    state: true
 - name: blocks_selector_0
   id: blocks_selector
   parameters:
@@ -358,25 +372,28 @@ blocks:
   parameters:
     _source_code: "\"\"\"\nEmbedded Python Block demo\n\"\"\"\n\nimport numpy as np\n\
       from gnuradio import gr\nfrom datetime import datetime\n\nimport pmt\n\nfrom\
-      \ datetime import datetime\n\nimport fileinput\nimport json\ncmd_dict = { \"\
-      0101\": \"learn\", \"0000\": \"off\", \"1110\": \"on\", \"1001\": \"reset\"\
-      , \"1000\": \"pwm\"}\n\n\ndef calc_checksum(msg):\n    s=0\n    for pos in range(0,\
-      \ len(msg)-4, 4):\n        chunk=int(msg[pos:pos+4][::-1], 2)\n        s = (s\
-      \ + chunk)\n    return 15 - (s % 15)\n\n\nclass my_sync_block(gr.sync_block):\n\
-      \    def __init__(self):\n        gr.sync_block.__init__(self,\n           \
-      \ name = \"Heating decoder\",\n            in_sig = None,\n            out_sig\
-      \ = None)\n        self.message_port_register_in(pmt.intern('msg_in'))\n   \
-      \     self.set_msg_handler(pmt.intern('msg_in'), self.handle_msg)\n        \n\
-      \    @staticmethod\n    def str_from_msg(msg):\n        msg = pmt.to_python(msg)[1]\n\
-      \        msg_str = ''.join(chr(c) for c in msg)\n        return msg_str\n\n\
-      \    def handle_msg(self, msg):\t\n        msg=my_sync_block.str_from_msg(msg)\n\
-      \        command = msg[12:16]\n        command_str = cmd_dict.get(command, \"\
-      unk\")\n        adr = msg[0:12]\n        seq = int(msg[16:20][::-1], 2)\n  \
-      \      chksum = int(msg[20:24][::-1], 2)\n        chksumok = \"ok\" if calc_checksum(msg)\
-      \ == chksum else f\"!= {calc_checksum(msg)}\"\n        print(f\"Time: {datetime.now()}\
-      \ Adr: {adr} Cmd: {command} ({command_str}) Seq: {seq} Sum: {chksum} {chksumok}\"\
-      , flush=True)\n    \n    def work(self, input_items, output_items):\n      \
-      \  pass\n"
+      \ datetime import datetime\n\nimport fileinput\nimport json\ncmd_dict = { 0xA\
+      \ : \"learn\", 0x0: \"off\", 0x7: \"on\", 0x9: \"reset\", 0x1: \"pwm\"}\n\n\
+      def calc_checksum(decoded):\n    checksum=sum([int(digit, 16) for digit in hex(decoded)[2::]])\n\
+      \    return checksum//16 == (decoded % 15)\n     \ndef str_from_msg(msg):\n\
+      \    msg = pmt.to_python(msg)[1]\n    msg_str = ''.join(chr(c) for c in msg)\n\
+      \    return msg_str\n    \n\ndef reverse_nibbles(msg_str):\n    chunks=\"\"\n\
+      \    for pos in range(0, len(msg_str), 4):\n        chunk=msg_str[pos:pos+4]\n\
+      \        chunk=chunk[::-1]\n        chunks+=chunk\n    return chunks\n\nclass\
+      \ my_sync_block(gr.sync_block):\n    def __init__(self):\n        gr.sync_block.__init__(self,\n\
+      \            name = \"Heating decoder\",\n            in_sig = None,\n     \
+      \       out_sig = None)\n        self.message_port_register_in(pmt.intern('msg_in'))\n\
+      \        self.message_port_register_out(pmt.intern('msg_out'))\n        self.set_msg_handler(pmt.intern('msg_in'),\
+      \ self.handle_msg)\n\n    def handle_msg(self, msg):\t\n        msg=str_from_msg(msg)\n\
+      \        reversed=reverse_nibbles(msg)\n        decoded=int(reversed, 2)\n\n\
+      \        adr = (decoded & 0xfff000) >> 12\n        \n        command = (decoded\
+      \ & 0xf00) >> 8\n        command_str = cmd_dict.get(command, \"unk\")\n\n  \
+      \      seq = (decoded & 0xf0) >> 4\n        chksum = decoded & 0xf\n       \
+      \ \n        chksumok = \"ok\" if calc_checksum(decoded) == 1 else f\"{hex(calc_checksum(decoded))}\
+      \ != 1\"\n        out=f\"Time: {datetime.now()} Msg: {decoded:06x} Adr: {adr:03x}\
+      \ Cmd: {command:01x} ({command_str}) Seq: {seq:01x} Sum: {chksum:01x} {chksumok}\"\
+      \n        self.message_port_pub(pmt.intern('msg_out'), pmt.intern(out))\n  \
+      \  \n    def work(self, input_items, output_items):\n        pass\n"
     affinity: ''
     alias: ''
     comment: ''
@@ -384,11 +401,11 @@ blocks:
     minoutbuf: '0'
   states:
     _io_cache: ('Heating decoder', 'my_sync_block', [], [('msg_in', 'message', 1)],
-      [], '', [])
+      [('msg_out', 'message', 1)], '', [])
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1248, 648.0]
+    coordinate: [1176, 656.0]
     rotation: 0
     state: true
 - name: freq_xlating_fir_filter_xxx_0_0
@@ -822,6 +839,28 @@ blocks:
     coordinate: [648, 500.0]
     rotation: 0
     state: true
+- name: qtgui_edit_box_msg_0
+  id: qtgui_edit_box_msg
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    gui_hint: '[6,0,1,3]'
+    is_pair: 'False'
+    is_static: 'False'
+    key: '1'
+    label: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: string
+    value: ''
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1424, 580.0]
+    rotation: 0
+    state: true
 - name: qtgui_freq_sink_x_0
   id: qtgui_freq_sink_x
   parameters:
@@ -1111,6 +1150,8 @@ connections:
 - [digital_binary_slicer_fb_0, '0', bitslice_slicer_0, '0']
 - [digital_correlate_access_code_tag_xx_0, '0', satellites_fixedlen_tagger_0, '0']
 - [digital_map_bb_0, '0', pdu_tagged_stream_to_pdu_0, '0']
+- [epy_block_0, msg_out, blocks_message_debug_0, print]
+- [epy_block_0, msg_out, qtgui_edit_box_msg_0, val]
 - [freq_xlating_fir_filter_xxx_0_0, '0', blocks_selector_0, '0']
 - [manchesterpdu_manchester_pdu_decoder_0, out, epy_block_0, msg_in]
 - [manchesterpdu_manchester_pdu_decoder_0, out, network_socket_pdu_0, pdus]

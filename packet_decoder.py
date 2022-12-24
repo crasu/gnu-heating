@@ -298,6 +298,13 @@ class packet_decoder(gr.top_block, Qt.QWidget):
 
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
+        self.qtgui_edit_box_msg_0 = qtgui.edit_box_msg(qtgui.STRING, '', '', False, False, '1', None)
+        self._qtgui_edit_box_msg_0_win = sip.wrapinstance(self.qtgui_edit_box_msg_0.qwidget(), Qt.QWidget)
+        self.top_grid_layout.addWidget(self._qtgui_edit_box_msg_0_win, 6, 0, 1, 3)
+        for r in range(6, 7):
+            self.top_grid_layout.setRowStretch(r, 1)
+        for c in range(0, 3):
+            self.top_grid_layout.setColumnStretch(c, 1)
         self.pdu_tagged_stream_to_pdu_0 = pdu.tagged_stream_to_pdu(gr.types.byte_t, 'packet_len')
         self.osmosdr_source_0 = osmosdr.source(
             args="numchan=" + str(1) + " " + ''
@@ -323,6 +330,7 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
         self.blocks_selector_0 = blocks.selector(gr.sizeof_gr_complex*1,0,0)
         self.blocks_selector_0.set_enabled(variable_qtgui_enable_button)
+        self.blocks_message_debug_0 = blocks.message_debug(True)
         self.bitslice_slicer_0 = bitslice.slicer(5)
         self.analog_simple_squelch_cc_0 = analog.simple_squelch_cc(variable_qtgui_squelch_threshold_0, 0.005)
         self.analog_quadrature_demod_cf_0 = analog.quadrature_demod_cf((samp_rate)/(2*math.pi*50000/8.0))
@@ -331,6 +339,8 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
+        self.msg_connect((self.epy_block_0, 'msg_out'), (self.blocks_message_debug_0, 'print'))
+        self.msg_connect((self.epy_block_0, 'msg_out'), (self.qtgui_edit_box_msg_0, 'val'))
         self.msg_connect((self.manchesterpdu_manchester_pdu_decoder_0, 'out'), (self.epy_block_0, 'msg_in'))
         self.msg_connect((self.manchesterpdu_manchester_pdu_decoder_0, 'out'), (self.network_socket_pdu_0, 'pdus'))
         self.msg_connect((self.pdu_tagged_stream_to_pdu_0, 'pdus'), (self.manchesterpdu_manchester_pdu_decoder_0, 'in'))
