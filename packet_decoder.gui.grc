@@ -180,13 +180,13 @@ blocks:
     start: '-100'
     step: '1'
     stop: '-10'
-    value: '-44'
+    value: '-41'
     widget: counter_slider
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [832, 852.0]
+    coordinate: [824, 868.0]
     rotation: 0
     state: true
 - name: variable_qtgui_waterfall_update_interval_multiplier
@@ -291,7 +291,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1384, 776.0]
+    coordinate: [1496, 504.0]
     rotation: 0
     state: true
 - name: blocks_selector_0
@@ -393,7 +393,9 @@ blocks:
       \ != 1\"\n        out=f\"Time: {datetime.now()} Msg: {decoded:06x} Adr: {adr:03x}\
       \ Cmd: {command:01x} ({command_str}) Seq: {seq:01x} Sum: {chksum:01x} {chksumok}\"\
       \n        self.message_port_pub(pmt.intern('msg_out'), pmt.intern(out))\n  \
-      \  \n    def work(self, input_items, output_items):\n        pass\n"
+      \      with open(\"log.txt\", \"a\") as logfile:\n            logfile.write(out\
+      \ + \"\\n\")\n    \n    def work(self, input_items, output_items):\n       \
+      \ pass\n"
     affinity: ''
     alias: ''
     comment: ''
@@ -405,7 +407,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1176, 656.0]
+    coordinate: [1240, 504.0]
     rotation: 0
     state: true
 - name: freq_xlating_fir_filter_xxx_0_0
@@ -443,26 +445,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [896, 500.0]
-    rotation: 0
-    state: true
-- name: network_socket_pdu_0
-  id: network_socket_pdu
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    host: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    mtu: '10000'
-    port: '52001'
-    tcp_no_delay: 'False'
-    type: TCP_SERVER
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1272, 476.0]
     rotation: 0
     state: true
 - name: osmosdr_source_0
@@ -858,7 +840,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1424, 580.0]
+    coordinate: [1200, 596.0]
     rotation: 0
     state: true
 - name: qtgui_freq_sink_x_0
@@ -1154,7 +1136,6 @@ connections:
 - [epy_block_0, msg_out, qtgui_edit_box_msg_0, val]
 - [freq_xlating_fir_filter_xxx_0_0, '0', blocks_selector_0, '0']
 - [manchesterpdu_manchester_pdu_decoder_0, out, epy_block_0, msg_in]
-- [manchesterpdu_manchester_pdu_decoder_0, out, network_socket_pdu_0, pdus]
 - [osmosdr_source_0, '0', freq_xlating_fir_filter_xxx_0_0, '0']
 - [pdu_tagged_stream_to_pdu_0, pdus, manchesterpdu_manchester_pdu_decoder_0, in]
 - [rational_resampler_xxx_0, '0', digital_binary_slicer_fb_0, '0']

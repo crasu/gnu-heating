@@ -37,7 +37,6 @@ from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio import gr, pdu
-from gnuradio import network
 from gnuradio.qtgui import Range, RangeWidget
 from PyQt5 import QtCore
 import bitslice
@@ -91,7 +90,7 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         ##################################################
         self.variable_qtgui_xlating_filter_width_range = variable_qtgui_xlating_filter_width_range = 200
         self.variable_qtgui_waterfall_update_interval_multiplier = variable_qtgui_waterfall_update_interval_multiplier = 2
-        self.variable_qtgui_squelch_threshold_0 = variable_qtgui_squelch_threshold_0 = -44
+        self.variable_qtgui_squelch_threshold_0 = variable_qtgui_squelch_threshold_0 = -41
         self.variable_qtgui_sdr_if_gain_range_0 = variable_qtgui_sdr_if_gain_range_0 = 24
         self.variable_qtgui_sdr_bb_gain_range_0 = variable_qtgui_sdr_bb_gain_range_0 = 42
         self.variable_qtgui_enable_button = variable_qtgui_enable_button = True
@@ -126,7 +125,7 @@ class packet_decoder(gr.top_block, Qt.QWidget):
             self.top_grid_layout.setRowStretch(r, 1)
         for c in range(2, 3):
             self.top_grid_layout.setColumnStretch(c, 1)
-        self._variable_qtgui_squelch_threshold_0_range = Range(-100, -10, 1, -44, 200)
+        self._variable_qtgui_squelch_threshold_0_range = Range(-100, -10, 1, -41, 200)
         self._variable_qtgui_squelch_threshold_0_win = RangeWidget(self._variable_qtgui_squelch_threshold_0_range, self.set_variable_qtgui_squelch_threshold_0, "Squelch threshold", "counter_slider", float, QtCore.Qt.Horizontal)
         self.top_grid_layout.addWidget(self._variable_qtgui_squelch_threshold_0_win, 5, 2, 1, 1)
         for r in range(5, 6):
@@ -321,7 +320,6 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_bb_gain(variable_qtgui_sdr_bb_gain_range_0, 0)
         self.osmosdr_source_0.set_antenna('', 0)
         self.osmosdr_source_0.set_bandwidth(0, 0)
-        self.network_socket_pdu_0 = network.socket_pdu('TCP_SERVER', '', '52001', 10000, False)
         self.manchesterpdu_manchester_pdu_decoder_0 = manchesterpdu.manchester_pdu_decoder(2)
         self.freq_xlating_fir_filter_xxx_0_0 = filter.freq_xlating_fir_filter_ccc(1,  firdes.low_pass(1,samp_rate,variable_qtgui_xlating_filter_width_range*1000/(2*1), 10000), center_frequency_0, samp_rate)
         self.epy_block_0 = epy_block_0.my_sync_block()
@@ -342,7 +340,6 @@ class packet_decoder(gr.top_block, Qt.QWidget):
         self.msg_connect((self.epy_block_0, 'msg_out'), (self.blocks_message_debug_0, 'print'))
         self.msg_connect((self.epy_block_0, 'msg_out'), (self.qtgui_edit_box_msg_0, 'val'))
         self.msg_connect((self.manchesterpdu_manchester_pdu_decoder_0, 'out'), (self.epy_block_0, 'msg_in'))
-        self.msg_connect((self.manchesterpdu_manchester_pdu_decoder_0, 'out'), (self.network_socket_pdu_0, 'pdus'))
         self.msg_connect((self.pdu_tagged_stream_to_pdu_0, 'pdus'), (self.manchesterpdu_manchester_pdu_decoder_0, 'in'))
         self.connect((self.analog_quadrature_demod_cf_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.analog_simple_squelch_cc_0, 0), (self.analog_quadrature_demod_cf_0, 0))
