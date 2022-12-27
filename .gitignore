@@ -6,5 +6,5 @@ analysis
 *.iml
 certs/
 credentials.config
-log.txt
+log*.txt
 packet_decoder_epy_block_0.py
